@@ -17,9 +17,7 @@
             <div class="form-container">
                 <form id="add-player-form">
                     <div class="input-group">
-                        <input type="text" id="riot-id" placeholder="Riot ID (예: HIDE ON BUSH)" required>
-                        <span class="separator">#</span>
-                        <input type="text" id="tag-line" placeholder="태그 (예: KR1)" required>
+                        <input type="text" id="riot-id-tag" placeholder="Riot ID#Tag (예: HIDE ON BUSH#KR1)" required>
                     </div>
                     <button type="submit" id="add-btn">플레이어 추가</button>
                 </form>
@@ -27,7 +25,10 @@
             </div>
 
             <div class="queue-container">
-                <h2>대기열 (<span id="player-count">0</span>/10)</h2>
+                <div class="queue-header">
+                    <h2>대기열 (<span id="player-count">0</span>/10)</h2>
+                    <button id="clear-queue-btn" class="subtle-btn">전체 삭제</button>
+                </div>
                 <div id="player-queue" class="player-grid">
                     <!-- 자바스크립트로 플레이어 카드 추가 -->
                 </div>
@@ -39,6 +40,9 @@
                     <div class="team">
                         <h3>TEAM 1</h3>
                         <div id="team-1" class="player-list"></div>
+                    </div>
+                    <div class="swap-controls">
+                        <button id="swap-btn" class="hidden">⇔</button>
                     </div>
                     <div class="team">
                         <h3>TEAM 2</h3>

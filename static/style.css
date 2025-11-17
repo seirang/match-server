@@ -41,7 +41,7 @@ body {
 
 .container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1100px; /* Increased width for swap button */
 }
 
 header {
@@ -92,12 +92,6 @@ header h1 {
     outline: none;
 }
 
-.input-group .separator {
-    font-size: 1.2rem;
-    color: var(--color-text-secondary);
-    margin: 0 0.5rem;
-}
-
 #add-btn, #reset-btn {
     background-color: var(--color-accent-blue);
     color: white;
@@ -133,10 +127,27 @@ header h1 {
     border: 1px solid var(--color-border);
 }
 
-.queue-container h2 {
-    text-align: center;
+.queue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1.5rem;
+}
+
+.queue-header h2 {
+    margin-bottom: 0;
     color: var(--color-text-secondary);
+}
+
+.subtle-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.subtle-btn:hover {
+    color: var(--color-accent-red);
 }
 
 .player-grid {
@@ -146,18 +157,52 @@ header h1 {
 }
 
 .player-card {
+    position: relative;
     background-color: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-left: 5px solid var(--tier-unranked); /* Default border color */
+    border-left: 5px solid var(--tier-unranked);
     border-radius: 5px;
     display: flex;
     align-items: center;
     padding: 1rem;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
 }
 
 .player-card:hover {
     background-color: #31313a;
+}
+
+.player-list .player-card {
+    cursor: pointer; /* Make result cards clickable */
+}
+
+.player-card.selected {
+    border-color: var(--color-accent-blue);
+    background-color: #31313a;
+}
+
+.delete-player-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--color-accent-red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.player-card:hover .delete-player-btn {
+    opacity: 1;
 }
 
 .player-icon {
@@ -190,8 +235,9 @@ header h1 {
 
 .teams {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    grid-template-columns: 1fr auto 1fr; /* Teams and swap button */
+    gap: 1rem;
+    align-items: center;
 }
 
 .team {
@@ -199,12 +245,37 @@ header h1 {
     padding: 1.5rem;
     border-radius: 8px;
     border: 1px solid var(--color-border);
+    min-height: 450px; /* Give teams a fixed height */
 }
 
 .team h3 {
     color: var(--color-accent-blue);
     text-align: center;
     margin-bottom: 1.5rem;
+}
+
+.swap-controls {
+    display: flex;
+    justify-content: center;
+}
+
+#swap-btn {
+    background-color: var(--color-accent-red);
+    color: white;
+    border: none;
+    border-radius: 50%; /* Make it circular */
+    width: 56px; /* Material UI FAB size */
+    height: 56px;
+    font-size: 1.5rem;
+    line-height: 56px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+#swap-btn:hover {
+    background-color: #d0384c;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
 }
 
 .player-list .player-card {
