@@ -57,8 +57,8 @@
 **Riot API키가 없으면 프로그램을 제대로 사용할 수 없습니다. 자신의 API키를 발급받으세요.**
 1.  홈페이지에 접속 `https://developer.riotgames.com/`
     라이엇 계정이 있어야 합니다. (없으면 회원가입 필요)
-2.  공개 서비스에서 사용할 수 있는 개발자 키를 발급받기 위하여 프로그램을 등록해 라이엇의 허락을 받아냅니다.
-2-1.    프로필탭의 DASHBOARD탭으로 들어가 RESGISTER PRODUCT를 누릅니다.
-2-2.    왼쪽에 위치한 production API 키의 RESGISTER PRODUCT를 누릅니다.
-2-3.    폼을 작성해 제출합니다.
+2.  공개 서비스에서 사용할 수 있는 개발자 키를 발급받기 위하여 프로그램을 등록해 라이엇의 허락을 받아냅니다.  
+2-1.    프로필탭의 DASHBOARD탭으로 들어가 RESGISTER PRODUCT를 누릅니다.  
+2-2.    왼쪽에 위치한 production API 키의 RESGISTER PRODUCT를 누릅니다.  
+2-3.    폼을 작성해 제출합니다.  
 3.  프로필의 APPS 탭으로 들어가 조짜기 프로그램 탭을 눌러 해당 프로그램용 API 키를 확인합니다.
