@@ -1,5 +1,6 @@
 import os
 import requests
+import sqlite3
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -12,6 +13,36 @@ load_dotenv(dotenv_path=dotenv_path)
 
 app = Flask(__name__)
 CORS(app) # Allow frontend to call backend
+
+# --- Database Setup ---
+DB_PATH = Path(__file__).parent / 'database.db'
+
+def get_db_connection():
+    """Establishes a connection to the SQLite database."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    """Initializes the database and creates the favorites table if it doesn't exist."""
+    with get_db_connection() as conn:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS favorites (
+                puuid TEXT PRIMARY KEY,
+                gameName TEXT NOT NULL,
+                tagLine TEXT NOT NULL,
+                summonerName TEXT,
+                profileIconId INTEGER,
+                summonerLevel INTEGER,
+                tier TEXT,
+                rank TEXT,
+                leaguePoints INTEGER,
+                wins INTEGER,
+                losses INTEGER,
+                profileIconUrl TEXT
+            )
+        ''')
+        conn.commit()
 
 # --- Riot API Configuration & Helpers ---
 RIOT_API_KEY = os.getenv('RIOT_API_KEY')
@@ -92,6 +123,66 @@ def fetch_player():
         print(f"An unexpected error occurred: {e}")
         return jsonify({'error': 'An internal server error occurred.', 'details': str(e)}), 500
 
+# --- Favorites Endpoints ---
+
+@app.route('/api/favorites', methods=['GET'])
+def get_favorites():
+    """Retrieve all favorited players from the database."""
+    with get_db_connection() as conn:
+        favorites = conn.execute('SELECT * FROM favorites').fetchall()
+        return jsonify([dict(row) for row in favorites])
+
+@app.route('/api/favorites', methods=['POST'])
+def add_favorite():
+    """Add a player to the favorites list in the database."""
+    player_data = request.json
+    required_fields = ['puuid', 'gameName', 'tagLine', 'profileIconUrl']
+    if not all(field in player_data for field in required_fields):
+        return jsonify({'error': 'Missing required player data.'}), 400
+
+    with get_db_connection() as conn:
+        try:
+            conn.execute(
+                '''
+                INSERT INTO favorites (puuid, gameName, tagLine, summonerName, profileIconId, summonerLevel, tier, rank, leaguePoints, wins, losses, profileIconUrl)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''',
+                (
+                    player_data.get('puuid'),
+                    player_data.get('gameName'),
+                    player_data.get('tagLine'),
+                    player_data.get('summonerName'),
+                    player_data.get('profileIconId'),
+                    player_data.get('summonerLevel'),
+                    player_data.get('tier'),
+                    player_data.get('rank'),
+                    player_data.get('leaguePoints'),
+                    player_data.get('wins'),
+                    player_data.get('losses'),
+                    player_data.get('profileIconUrl')
+                )
+            )
+            conn.commit()
+            return jsonify(player_data), 201
+        except sqlite3.IntegrityError:
+            return jsonify({'error': 'Player already in favorites.'}), 409
+        except Exception as e:
+            print(f"Error adding favorite: {e}")
+            return jsonify({'error': 'An internal server error occurred while adding favorite.'}), 500
+
+@app.route('/api/favorites/<string:puuid>', methods=['DELETE'])
+def delete_favorite(puuid):
+    """Delete a player from favorites by their PUUID."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM favorites WHERE puuid = ?', (puuid,))
+        conn.commit()
+        if cursor.rowcount > 0:
+            return jsonify({'message': 'Favorite deleted successfully.'}), 200
+        else:
+            return jsonify({'error': 'Favorite not found.'}), 404
+
 
 if __name__ == '__main__':
+    init_db() # Initialize database on startup
     app.run(debug=True, port=5001)
